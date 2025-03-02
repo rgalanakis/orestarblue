@@ -1,6 +1,12 @@
 ActBlue CSV to ORESTAR XML Converter
 ===
 
+**Developed by Rob Galanakis, [www.robgforpps.com](https://robgforpps.com).**
+
+**Vote for Rob G in the May 2025 election for Portland School Board, Zone 6!**
+
+# Usage
+
 ```
 Usage: orestarblue [--filer-id=<id>] [--out=<xml filename>] <ActBlue check CSV export>
 
