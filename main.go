@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"encoding/xml"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -48,20 +47,21 @@ func run(inpath, filerId, outpath string) error {
 	if err != nil {
 		return ErrWrap(err, "reading csv")
 	}
+
 	rows, err := toRows(rowSlices[0], rowSlices[1:])
 	if err != nil {
 		return err
 	}
-	if len(rows) > MaxOrestarRows {
-		return errors.New("orestar only allows 2000 transactions per-upload, please break the file up or add support to this project")
+	contacts, transactions, err := initForExpenses(rows)
+	if err != nil {
+		return err
 	}
-	var contacts []Contact
-	var transactions []Transaction
 	for _, row := range rows {
 		c, t := rowToContribution(row)
 		contacts = append(contacts, c)
 		transactions = append(transactions, t)
 	}
+
 	var outWriter io.Writer
 	if outpath == "" || outpath == "-" {
 		outWriter = os.Stdout
@@ -81,6 +81,9 @@ func run(inpath, filerId, outpath string) error {
 }
 
 func toRows(headers []string, rows [][]string) ([]Row, error) {
+	if len(rows) > MaxOrestarRows {
+		return nil, fmt.Errorf("orestar only allows %d transactions per-upload, please break the file up (and please file an issue)", MaxOrestarRows)
+	}
 	m := make(map[string]any, len(headers))
 	result := make([]Row, len(rows))
 	for rowIdx, row := range rows {
@@ -127,3 +130,35 @@ func WriteTransactionsDoc(w io.Writer, filerId string, contacts []Contact, trans
 }
 
 const MaxOrestarRows = 2000
+
+// Create the ActBlue contact and expenditure.
+func initForExpenses(rows []Row) ([]Contact, []Transaction, error) {
+	row := rows[0]
+	c := Contact{}
+	c.Id = fmt.Sprintf("%s-actblue", idprefix)
+	c.Type = ContactTypeBusiness
+	c.ContactName.BusinessName = "ActBlue Technical Services"
+	c.Address.City = "Somerville"
+	c.Address.State = "MA"
+
+	t := Transaction{}
+	t.Id = fmt.Sprintf("%s-AB-%s", idprefix, row.CheckNumber)
+	t.Operation.Add = true
+	t.ContactId = c.Id
+	t.Type = ETExpenditure
+	t.SubType = ETCashExpenditure
+	t.Purpose = TPGeneralOperating
+	t.PaymentMethod = TPMEtf
+	t.Date = row.CheckDate
+
+	fee := Money{}
+	for _, r := range rows {
+		if ramount, err := ParseMoney(r.Fee); err != nil {
+			return nil, nil, ErrWrap(err, "parsing fee")
+		} else {
+			fee = fee.Add(ramount)
+		}
+	}
+	t.Amount = fee.String()
+	return []Contact{c}, []Transaction{t}, nil
+}

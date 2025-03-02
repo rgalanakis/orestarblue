@@ -51,14 +51,14 @@ type ContactType string
 
 //goland:noinspection GoUnusedConst
 const (
-	CctBusiness           ContactType = "B"
-	CctPoliticalCommittee ContactType = "C"
-	CctFamily             ContactType = "F"
-	CctIndividual         ContactType = "I"
-	CctLabor              ContactType = "L"
-	CctOther              ContactType = "O"
-	CctPoliticalParty     ContactType = "P"
-	CctUnregistered       ContactType = "U"
+	ContactTypeBusiness           ContactType = "B"
+	ContactTypePoliticalCommittee ContactType = "C"
+	ContactTypeFamily             ContactType = "F"
+	ContactTypeIndividual         ContactType = "I"
+	ContactTypeLabor              ContactType = "L"
+	ContactTypeOther              ContactType = "O"
+	ContactTypePoliticalParty     ContactType = "P"
+	ContactTypeUnregistered       ContactType = "U"
 )
 
 type Transaction struct {
@@ -72,26 +72,80 @@ type Transaction struct {
 	SubType   TransactionSubType `xml:"sub-type"`
 	Amount    string             `xml:"amount"`
 	Date      string             `xml:"date"`
+
+	Purpose       TransactionPurpose       `xml:"tran-purpose,omitempty"`
+	PaymentMethod TransactionPaymentMethod `xml:"payment-method,omitempty"`
+	Description   string                   `xml:"description,omitempty"`
 }
 
 type TransactionType string
 
 //goland:noinspection GoUnusedConst
 const (
-	TtContribution TransactionType = "C"
-	TtOther        TransactionType = "OR"
+	CTContribution TransactionType = "C"
+	CTOther        TransactionType = "OR"
+
+	ETExpenditure       TransactionType = "E"
+	ETOther             TransactionType = "O"
+	ETOtherDisbursement TransactionType = "OD"
 )
 
 type TransactionSubType string
 
 //goland:noinspection GoUnusedConst
 const (
-	TstCash                   TransactionSubType = "CA"
-	TstInkindContribution     TransactionSubType = "IK"
-	TstInkindForgivenAccount  TransactionSubType = "IKA"
-	TstInkindForgivenPersonal TransactionSubType = "IKP"
-	TstItemSoldFairMarket     TransactionSubType = "FM"
-	TstItemReturnedCheck      TransactionSubType = "LC"
-	TstItemMisc               TransactionSubType = "OM"
-	TstItemRefund             TransactionSubType = "RF"
+	TSTCash                   TransactionSubType = "CA"
+	TSTInkindContribution     TransactionSubType = "IK"
+	TSTInkindForgivenAccount  TransactionSubType = "IKA"
+	TSTInkindForgivenPersonal TransactionSubType = "IKP"
+	TSTItemSoldFairMarket     TransactionSubType = "FM"
+	TSTItemReturnedCheck      TransactionSubType = "LC"
+	TSTItemMisc               TransactionSubType = "OM"
+	TSTItemRefund             TransactionSubType = "RF"
+
+	ETAccountsPayable                TransactionSubType = "AP"
+	ETCashExpenditure                TransactionSubType = "CE"
+	ETPersonalExpenditure            TransactionSubType = "PE"
+	ETAccountsPayableRescinded       TransactionSubType = "APR"
+	ETCashBalanceAdjustment          TransactionSubType = "CBA"
+	ETMiscellaneousOtherDisbursement TransactionSubType = "OMD"
+	ETRefundOfContribution           TransactionSubType = "RF"
+)
+
+type TransactionPurpose string
+
+//goland:noinspection GoUnusedConst
+const (
+	TPWages            TransactionPurpose = "W"
+	TPCash             TransactionPurpose = "C"
+	TPReimbursement    TransactionPurpose = "R"
+	TPBroadcast        TransactionPurpose = "B"
+	TPFundraising      TransactionPurpose = "F"
+	TPGeneralOperating TransactionPurpose = "G"
+	TPPrimting         TransactionPurpose = "L"
+	TPManagement       TransactionPurpose = "M"
+	TPNewspaper        TransactionPurpose = "N"
+	TPOtherAd          TransactionPurpose = "O"
+	TPPetition         TransactionPurpose = "Y"
+	TPPostage          TransactionPurpose = "P"
+	TPPrepAd           TransactionPurpose = "A"
+	TPPolling          TransactionPurpose = "S"
+	TPTravel           TransactionPurpose = "T"
+	TPUtilities        TransactionPurpose = "U"
+)
+
+// https://sos.oregon.gov/elections/Documents/orestarTransFiling.pdf
+// source on page 33-34:
+
+type TransactionPaymentMethod string
+
+//goland:noinspection GoUnusedConst
+const (
+	TPMCash             TransactionPaymentMethod = "CA"
+	TPMCheck            TransactionPaymentMethod = "CHK"
+	TPMMoneyOrder       TransactionPaymentMethod = "CHK"
+	TPMCreditCardOnline TransactionPaymentMethod = "CC"
+	TPMCreditCardPaper  TransactionPaymentMethod = "CC"
+	TPMEtf              TransactionPaymentMethod = "EFT"
+	TPMDebit            TransactionPaymentMethod = "DC"
 )

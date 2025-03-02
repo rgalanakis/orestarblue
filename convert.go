@@ -27,12 +27,12 @@ func rowToContribution(r Row) (c Contact, t Transaction) {
 	c.Id = oaeContactId
 	switch r.Kind {
 	case "page":
-		c.Type = CctIndividual
+		c.Type = ContactTypeIndividual
 	default:
 		panic(fmt.Errorf("unknown contact type: %+v", r))
 	}
 	switch c.Type {
-	case CctIndividual:
+	case ContactTypeIndividual:
 		c.ContactName.IndividualName = &ContactNameIndividual{
 			First: r.DonorFirstName,
 			Last:  r.DonorLastName,
@@ -70,11 +70,11 @@ func rowToContribution(r Row) (c Contact, t Transaction) {
 	t.Id = Substr(fmt.Sprintf("%s-%s-%s", idprefix, r.ReceiptID, r.PaymentID), maxOrestarIdLen)
 	t.ContactId = oaeContactId
 	t.Operation.Add = true
-	t.Type = TtContribution
-	t.SubType = TstCash
+	t.Type = CTContribution
+	t.SubType = TSTCash
 	t.Amount = r.Amount
 	t.Date = r.PaymentDate[:len("2000-01-01")]
-
+	t.Description = "Merchant Fees"
 	return
 }
 
