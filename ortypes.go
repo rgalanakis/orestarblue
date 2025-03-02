@@ -15,13 +15,11 @@ type Contact struct {
 		Zip     string `xml:"zip"`
 	} `xml:"address"`
 
-	Phone struct {
-		Home string `xml:"home"`
-	} `xml:"phone"`
-	Email      string `xml:"email,omitempty"`
-	Occupation string `xml:"occupation"`
+	Phone      *ContactPhone `xml:"phone,omitempty"`
+	Email      string        `xml:"email,omitempty"`
+	Occupation string        `xml:"occupation"`
 
-	Employment Employment `xml:"employment"`
+	Employment *Employment `xml:"employment,omitempty"`
 }
 
 type ContactName struct {
@@ -37,6 +35,10 @@ type ContactNameCommittee struct {
 type ContactNameIndividual struct {
 	First string `xml:"first"`
 	Last  string `xml:"last"`
+}
+
+type ContactPhone struct {
+	Home string `xml:"home"`
 }
 
 type Employment struct {
@@ -61,21 +63,26 @@ const (
 	ContactTypeUnregistered       ContactType = "U"
 )
 
+// Transaction represents an ORESTAR transaction
+// (contribution or expenditure).
+// NOTE: Do not rearrange these field orders!
+// The XML is order-dependent, like having Purpose after SubType.
 type Transaction struct {
-	XMLName   struct{} `xml:"transaction"`
-	Id        string   `xml:"id,attr"`
-	Operation struct {
-		Add bool `xml:"add"`
-	} `xml:"operation"`
-	ContactId string             `xml:"contact-id"`
-	Type      TransactionType    `xml:"type"`
-	SubType   TransactionSubType `xml:"sub-type"`
-	Amount    string             `xml:"amount"`
-	Date      string             `xml:"date"`
-
+	XMLName       struct{}                 `xml:"transaction"`
+	Id            string                   `xml:"id,attr"`
+	Operation     TransactionOperation     `xml:"operation"`
+	ContactId     string                   `xml:"contact-id"`
+	Type          TransactionType          `xml:"type"`
+	SubType       TransactionSubType       `xml:"sub-type"`
 	Purpose       TransactionPurpose       `xml:"tran-purpose,omitempty"`
-	PaymentMethod TransactionPaymentMethod `xml:"payment-method,omitempty"`
 	Description   string                   `xml:"description,omitempty"`
+	Amount        string                   `xml:"amount"`
+	PaymentMethod TransactionPaymentMethod `xml:"payment-method,omitempty"`
+	Date          string                   `xml:"date"`
+}
+
+type TransactionOperation struct {
+	Add bool `xml:"add"`
 }
 
 type TransactionType string

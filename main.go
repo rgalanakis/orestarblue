@@ -140,6 +140,7 @@ func initForExpenses(rows []Row) ([]Contact, []Transaction, error) {
 	c.ContactName.BusinessName = "ActBlue Technical Services"
 	c.Address.City = "Somerville"
 	c.Address.State = "MA"
+	c.Address.Zip = "02144"
 
 	t := Transaction{}
 	t.Id = fmt.Sprintf("%s-AB-%s", idprefix, row.CheckNumber)
@@ -150,6 +151,7 @@ func initForExpenses(rows []Row) ([]Contact, []Transaction, error) {
 	t.Purpose = TPGeneralOperating
 	t.PaymentMethod = TPMEtf
 	t.Date = row.CheckDate
+	t.Description = "Merchant Fees"
 
 	fee := Money{}
 	for _, r := range rows {

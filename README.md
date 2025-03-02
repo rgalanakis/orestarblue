@@ -29,3 +29,30 @@ For example, "Rob Galanakis for PPS (24090)" has a Filer ID of 24090.
 
 	Pass the filename to write to. If not given, write to stdout.
 ```
+
+## Notes
+
+This uploader only handles adding transactions for cash contributions and actblue fees;
+it does not (yet?) handle things like refunds.
+
+**YOU MUST CHECK OVER THE OUTPUTS.**
+
+We create a Contact for every row, based on their name and zipcode.
+This ensures they stay consistent between uploads.
+
+We create a Cash Contribution for every row in the CSV.
+
+We create one Cash Expenditure for the total of all Fees in the CSV,
+and add it as one General Expense line item. This is how I have seen it recorded in ORESTAR.
+
+## Development
+
+Code references ('G' means 'Transaction Puropose -> General') can be found here:
+https://sos.oregon.gov/elections/Documents/xml_overview.pdf
+
+More formal XML specs can be found here:
+https://sos.oregon.gov/elections/Documents/xml_specs.pdf
+
+The Hack Oregon converters provide some great working code. They can can be found here:
+- https://github.com/hackoregon/openelections/blob/develop/api/models/converters/orestarContributionConverter.ts
+- https://github.com/hackoregon/openelections/blob/develop/api/models/converters/orestarExpenditureConverter.ts

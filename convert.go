@@ -48,14 +48,14 @@ func rowToContribution(r Row) (c Contact, t Transaction) {
 	c.Address.Zip = r.DonorZIP[:5]
 
 	// Phone can be invalid so give it a default if so.
+	c.Phone = &ContactPhone{Home: "555-555-5555"}
 	if len(r.DonorPhone) >= 10 {
 		c.Phone.Home = r.DonorPhone
-	} else {
-		c.Phone.Home = "555-555-5555"
 	}
 
 	c.Email = r.DonorEmail
 	c.Occupation = r.DonorOccupation
+	c.Employment = &Employment{}
 	switch r.DonorEmployer {
 	case "Self-employed":
 		c.Employment.SelfEmployed = Ptr("")
@@ -74,7 +74,6 @@ func rowToContribution(r Row) (c Contact, t Transaction) {
 	t.SubType = TSTCash
 	t.Amount = r.Amount
 	t.Date = r.PaymentDate[:len("2000-01-01")]
-	t.Description = "Merchant Fees"
 	return
 }
 
